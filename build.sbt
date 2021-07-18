@@ -17,9 +17,9 @@ libraryDependencies ++= {
   )
 }
 
-val logback = "1.2.3"
-libraryDependencies += "ch.qos.logback" % "logback-core" % logback
-libraryDependencies += "ch.qos.logback" % "logback-classic" % logback
+//val logback = "1.2.3"
+//libraryDependencies += "ch.qos.logback" % "logback-core" % logback
+//libraryDependencies += "ch.qos.logback" % "logback-classic" % logback
 
 libraryDependencies += "org.apache.kafka" % "kafka-streams-test-utils" % kafkaVersion % "test"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.4" % "test"

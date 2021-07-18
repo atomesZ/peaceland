@@ -7,20 +7,21 @@ import scala.collection.JavaConverters._
 object KafkaConsumerSubscribeApp extends App {
 
   val props:Properties = new Properties()
-  props.put("group.id", "test")
+  props.put("group.id", "consumer-group")
   props.put("bootstrap.servers","localhost:9092")
   props.put("key.deserializer",
     "org.apache.kafka.common.serialization.StringDeserializer")
   props.put("value.deserializer",
     "org.apache.kafka.common.serialization.StringDeserializer")
-  props.put("enable.auto.commit", "true")
-  props.put("auto.commit.interval.ms", "1000")
+  //props.put("enable.auto.commit", "true")
+  props.put("auto.offset.reset", "latest")
+  //props.put("auto.commit.interval.ms", "1000")
   val consumer = new KafkaConsumer(props)
   val topics = List("report")
   try {
     consumer.subscribe(topics.asJava)
     while (true) {
-      val records = consumer.poll(10)
+      val records = consumer.poll(1000)
       for (record <- records.asScala) {
         println("Topic: " + record.topic() +
           ",Key: " + record.key() +
@@ -29,9 +30,9 @@ object KafkaConsumerSubscribeApp extends App {
           ", Partition: " + record.partition())
       }
     }
-  }catch{
+  } catch{
     case e:Exception => e.printStackTrace()
-  }finally {
+  } finally {
     consumer.close()
   }
 }

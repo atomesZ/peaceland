@@ -17,20 +17,21 @@ object KafkaConsumerSubscribeApp extends App {
   props.put("auto.offset.reset", "latest")
   //props.put("auto.commit.interval.ms", "1000")
   val consumer = new KafkaConsumer(props)
-  val topics = List("report")
+  val topics = List("ReportConsumer")
   try {
     consumer.subscribe(topics.asJava)
     while (true) {
       val records = consumer.poll(1000)
-      for (record <- records.asScala) {
+
+      records.forEach(record => {
         println("Topic: " + record.topic() +
           ",Key: " + record.key() +
           ",Value: " + record.value() +
           ", Offset: " + record.offset() +
           ", Partition: " + record.partition())
-      }
+      })
     }
-  } catch{
+  } catch {
     case e:Exception => e.printStackTrace()
   } finally {
     consumer.close()

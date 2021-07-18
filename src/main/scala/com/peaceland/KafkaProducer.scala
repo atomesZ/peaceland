@@ -32,7 +32,7 @@ object KafkaProducerApp extends App {
 
     df.rdd.foreachPartition((partitions: Iterator[Row]) => {
       partitions.foreach((row: Row) => {
-          val record = new ProducerRecord[String, String](topic, row(0).toString, row(1).toString + "," + row(2).toString + "," + row(3).toString + "," +  row(4).toString + "," +  row(5).toString)
+          val record = new ProducerRecord[String, String](topic, row(0).toString, row(0).toString + "," + row(1).toString + "," + row(2).toString + "," + row(3).toString + "," +  row(4).toString + "," +  row(5).toString)
           val metadata = producer.send(record)
 
           printf(s"sent record(key=%s value=%s) " +
@@ -42,9 +42,9 @@ object KafkaProducerApp extends App {
             metadata.get().offset())
       })
     })
-  }catch{
+  } catch{
     case e:Exception => e.printStackTrace()
-  }finally {
+  } finally {
     producer.close()
   }
 }

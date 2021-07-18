@@ -22,8 +22,6 @@ object KafkaStreamApp extends App {
 
   val builder = new StreamsBuilder
 
-  println(StreamsConfig.APPLICATION_ID_CONFIG)
-
   val reportKStream: KStream[String, String] = builder.stream[String, String]("Report")
 
   val reportConsumer: KStream[String, String] = reportKStream
@@ -35,7 +33,9 @@ object KafkaStreamApp extends App {
     Vlist(1) + "," + Vlist(2) + "," + Vlist(3)
   }
 
-  val alertConsumer: KStream[String, String] = reportKStream.filter((K, V) => V.split(",")(4).toInt <= 10)
+  val peacescoreAlertThreshold = 40
+
+  val alertConsumer: KStream[String, String] = reportKStream.filter((K, V) => V.split(",")(4).toInt <= peacescoreAlertThreshold)
                                                             .map((K, V) => (K, report2Alert(V)))
   alertConsumer.to("Alert")
 

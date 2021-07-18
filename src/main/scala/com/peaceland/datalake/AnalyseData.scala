@@ -41,7 +41,9 @@ object AnalyseData {
     val conf: SparkConf = new SparkConf().setMaster("local[2]").setAppName("ParquetTest")
     val sc: SparkContext = new SparkContext(conf)
     val sqlContext: SQLContext = new SQLContext(sc)
+    writeParquet(sc, sqlContext)
     val data = readParquet(sqlContext)
+
 
     showData(data)
     getStats(data)

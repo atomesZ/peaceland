@@ -4,7 +4,7 @@ import java.util.{Collections, Properties}
 import java.util.regex.Pattern
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import scala.collection.JavaConverters._
-object KafkaConsumerSubscribeApp extends App {
+object KafkaConsumerAlertSubscribeApp extends App {
 
   val props:Properties = new Properties()
   props.put("group.id", "consumer-group")
@@ -17,7 +17,7 @@ object KafkaConsumerSubscribeApp extends App {
   props.put("auto.offset.reset", "latest")
   //props.put("auto.commit.interval.ms", "1000")
   val consumer = new KafkaConsumer(props)
-  val topics = List("ReportConsumer")
+  val topics = List("Alert")
   try {
     consumer.subscribe(topics.asJava)
     while (true) {

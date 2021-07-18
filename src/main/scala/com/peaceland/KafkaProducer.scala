@@ -21,7 +21,6 @@ object KafkaProducerApp extends App {
   val topic = "report"
 
   try {
-
     val spark = SparkSession
       .builder()
       .appName("Spark SQL basic example")
@@ -30,25 +29,19 @@ object KafkaProducerApp extends App {
 
     val df = spark.read.csv("data/drone.csv")
 
-    df.printSchema()
 
-    def printRowInfos(row: Row): Unit =
-    {
-      printf(s"sent record %s %s %s %s %s %s\n",
-        row(0), row(1), row(2), row(3), row(4), row(5))
-    }
+    df.rdd.foreachPartition((partitions: Iterator[Row]) => {
+      partitions.foreach((row: Row) => {
+          val record = new ProducerRecord[String, String](topic, row(0).toString, row(1).toString + "," + row(2).toString + "," + row(3).toString + "," +  row(4).toString + "," +  row(5).toString)
+          val metadata = producer.send(record)
 
-    df.rdd.foreach(printRowInfos)
-
-    for (i <- 0 to 15) {
-      val record = new ProducerRecord[String, String](topic, i.toString, "tuer autre humain" + i)
-      val metadata = producer.send(record)
-      printf(s"sent record(key=%s value=%s) " +
-        "meta(partition=%d, offset=%d)\n",
-        record.key(), record.value(),
-        metadata.get().partition(),
-        metadata.get().offset())
-    }
+          printf(s"sent record(key=%s value=%s) " +
+            "meta(partition=%d, offset=%d)\n",
+            record.key(), record.value(),
+            metadata.get().partition(),
+            metadata.get().offset())
+      })
+    })
   }catch{
     case e:Exception => e.printStackTrace()
   }finally {

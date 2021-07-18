@@ -18,7 +18,7 @@ object KafkaProducerApp extends App {
     "org.apache.kafka.common.serialization.StringSerializer")
   props.put("acks","all")
   val producer = new KafkaProducer[String, String](props)
-  val topic = "report"
+  val topic = "Report"
 
   try {
     val spark = SparkSession
@@ -27,12 +27,19 @@ object KafkaProducerApp extends App {
       .config("spark.master", "local")
       .getOrCreate()
 
-    val df = spark.read.csv("data/drone.csv")
+    //val df = spark.read.csv("data/drone.csv")
 
+    val rddFromFile = spark.sparkContext.textFile("data/drone.csv")
 
-    df.rdd.foreachPartition((partitions: Iterator[Row]) => {
-      partitions.foreach((row: Row) => {
-          val record = new ProducerRecord[String, String](topic, row(0).toString, row(0).toString + "," + row(1).toString + "," + row(2).toString + "," + row(3).toString + "," +  row(4).toString + "," +  row(5).toString)
+    val rdd = rddFromFile.map(f=>{
+      f.split(",")
+    })
+
+    rdd.mapPartitionsWithIndex {
+      (idx, iter) => if (idx == 0) iter.drop(1) else iter
+    }.foreachPartition((partitions: Iterator[Array[String]]) => {
+      partitions.foreach((row: Array[String]) => {
+          val record = new ProducerRecord[String, String](topic, row(0), row(0) + "," + row(1) + "," + row(2) + "," + row(3) + "," +  row(4) + "," +  row(5))
           val metadata = producer.send(record)
 
           printf(s"sent record(key=%s value=%s) " +

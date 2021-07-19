@@ -5,6 +5,9 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.{min, max}
+import org.apache.hadoop.fs.{FileSystem, Path}
+import org.apache.spark.sql.SparkSession
+
 
 object AnalyseData {
 
@@ -41,9 +44,8 @@ object AnalyseData {
     val conf: SparkConf = new SparkConf().setMaster("local[2]").setAppName("ParquetTest")
     val sc: SparkContext = new SparkContext(conf)
     val sqlContext: SQLContext = new SQLContext(sc)
-    writeParquet(sc, sqlContext)
-    val data = readParquet(sqlContext)
 
+    val data = readParquet(sqlContext)
 
     showData(data)
     getStats(data)

@@ -7,16 +7,15 @@ import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
 object ParquetTest {
   val path = "hdfs://localhost:9000/user/hadoop/"
 
-  def main(args: Array[String]) = {
+  def main(args: Array[String]) : Unit = {
     // Two threads local[2]
     val conf: SparkConf = new SparkConf().setMaster("local[2]").setAppName("ParquetTest")
     val sc: SparkContext = new SparkContext(conf)
     val sqlContext: SQLContext = new SQLContext(sc)
     writeParquet(sc, sqlContext)
-    readParquet(sqlContext)
   }
 
-  def writeParquet(sc: SparkContext, sqlContext: SQLContext) = {
+  def writeParquet(sc: SparkContext, sqlContext: SQLContext) : Unit = {
     // Read file as RDD
     val rdd = sqlContext.read.format("csv").option("header", "true").load(path + "drone.csv")
     // Convert rdd to data frame using toDF; the following import is required to use toDF function.

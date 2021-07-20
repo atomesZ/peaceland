@@ -1,0 +1,35 @@
+# To run this project:
+
+cd docker/
+
+docker-compose up -d  # to start zookeeper broker and hdfs
+
+cd ..
+
+sbt compile
+
+#Then you can open multiple terminals (1 per mains) and run :
+
+sbt run # then type 1 to run the alerter that ll print alerts for citizen with bad peacescore and send his location along with his name
+
+sbt run # then type 2 to run the basic consumer that ll receive every reports and print it
+
+sbt run # then type 3 to run the producer that will send infos (you can run it multiple times to send the infos multiple times if you want) 
+
+sbt run # then type 4 to run the kafka stream that ll connect the producers and the consumers
+
+
+# For the nexts 'sudo' might be required if your linux user does not have the same privileges as your docker user
+
+sudo sbt run # then type 6 to write a parquet of your datas
+
+sudo sbt run # then type 5 to analyze your datas
+
+
+
+
+# When you are done, you can shut down docker compose:
+
+cd docker
+
+docker-compose down
